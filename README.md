@@ -9,6 +9,7 @@ Esta pasta reúne scripts pessoais para abrir ferramentas de desenvolvimento, cr
 | `.info.sh` | Define `info`, com instruções e comandos detalhados para instalação e atualização. |
 | `.instalar.sh` | Instala ferramentas e dependências por módulo. É executado com `bash`. |
 | `.atualizar.sh` | Atualiza sistema e ferramentas; quando um módulo necessário não está instalado, tenta instalá-lo com `.instalar.sh`. Define também `recarregar` e o alias `recarga`. |
+| `.reduzir-ram.sh` | Define `reduzir-ram` para inspecionar e reduzir o uso de memória no WSL e no Windows hospedeiro. |
 | `.abrir-dev.sh` | Define `abrir` e `abrir-dev` para iniciar aplicativos de desenvolvimento, principalmente em WSL2. |
 | `.tunnels.sh` | Define os comandos `tunnel` e `tunel` para operações de túnel. |
 | `.export.sh` | Define `export-env` e o alias `exp` para exportar um ambiente Conda. |
@@ -112,10 +113,12 @@ O arquivo `environment.yml` é criado no diretório atual e não inclui o caminh
 ```bash
 reduzir-ram          # mostra os maiores processos e permite escolher um para encerrar
 reduzir-ram --listar # apenas mostra o resumo de memória e os processos
+reduzir-ram --windows # inspeciona/gerencia processos com janela no Windows hospedeiro
+reduzir-ram --wsl     # limita a operação ao WSL
 reduzir-ram --ajuda  # mostra as opções
 ```
 
-O comando não desinstala nem encerra processos automaticamente. Você escolhe um PID e confirma antes de enviar um sinal de encerramento normal. Processos essenciais, a sessão atual e processos Microsoft durante atualizações são protegidos. Para liberar RAM de um aplicativo, salve seu trabalho antes de encerrá-lo.
+O comando padrão mostra primeiro o WSL e depois o Windows hospedeiro. No Windows, lista o uso de memória física e os processos; permite pedir o fechamento normal de janelas selecionadas. No WSL, envia `SIGTERM` após escolha e confirmação. Não desinstala, não encerra à força, protege processos essenciais e protege programas Microsoft quando detecta uma atualização ativa. `vmmemWSL` representa a VM do WSL; desligá-la encerra todas as distribuições e sessões WSL. Salve o trabalho antes de fechar aplicativos.
 
 ## Erro ao carregar o plugin `repo` do Conda
 

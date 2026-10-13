@@ -6,7 +6,9 @@ _ram_ajuda() {
     cat <<'EOF'
 Uso:
   reduzir-ram          Mostra o uso de memória e oferece encerramento seletivo.
-  reduzir-ram --listar Mostra apenas o resumo e os maiores processos.
+  reduzir-ram --listar Mostra os maiores processos do WSL e do Windows.
+  reduzir-ram --windows Abre apenas o relatório/controle do Windows hospedeiro.
+  reduzir-ram --wsl     Limita o relatório/controle à sessão Linux.
   reduzir-ram --ajuda  Mostra esta ajuda.
 
 O encerramento é feito com SIGTERM após escolher um PID. Processos do sistema,
@@ -126,11 +128,45 @@ _ram_interativo() {
     done
 }
 
+_ram_windows() {
+    local script="$HOME/projetos/my-linux-setup/windows/reduzir-ram.ps1"
+    local script_windows
+
+    if ! command -v powershell.exe >/dev/null 2>&1 || ! command -v wslpath >/dev/null 2>&1; then
+        printf 'PowerShell/interop do Windows não está disponível nesta sessão.\n'
+        return 1
+    fi
+    if [[ ! -f "$script" ]]; then
+        printf 'Complemento Windows não encontrado: %s\n' "$script"
+        return 1
+    fi
+
+    script_windows="$(wslpath -w "$script" 2>/dev/null | tr -d '\r')"
+    if [[ "${1:-}" == --listar ]]; then
+        powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$script_windows" -ListOnly
+    else
+        powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$script_windows"
+    fi
+}
+
 reduzir_ram() {
     case "${1:-}" in
-        --ajuda|-h|--help) _ram_ajuda ;;
-        --listar|-l) _ram_mostrar ;;
-        "") _ram_interativo ;;
+        --ajuda|-h|--help)
+            _ram_ajuda
+            printf '\nNo WSL, --windows abre o controle do Windows; --wsl limita a sessão Linux.\n'
+            ;;
+        --listar|-l)
+            _ram_mostrar
+            printf '\n'
+            _ram_windows --listar
+            ;;
+        --wsl) _ram_interativo ;;
+        --windows) _ram_windows ;;
+        "")
+            _ram_interativo
+            printf '\n===== Windows hospedeiro =====\n'
+            _ram_windows
+            ;;
         *) _ram_ajuda; return 2 ;;
     esac
 }
