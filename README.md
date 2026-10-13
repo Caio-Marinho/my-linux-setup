@@ -107,6 +107,16 @@ export-env nome-do-ambiente
 
 O arquivo `environment.yml` é criado no diretório atual e não inclui o caminho local do prefixo do ambiente. `exp` é um alias para `export-env`.
 
+### Reduzir o uso de RAM
+
+```bash
+reduzir-ram          # mostra os maiores processos e permite escolher um para encerrar
+reduzir-ram --listar # apenas mostra o resumo de memória e os processos
+reduzir-ram --ajuda  # mostra as opções
+```
+
+O comando não desinstala nem encerra processos automaticamente. Você escolhe um PID e confirma antes de enviar um sinal de encerramento normal. Processos essenciais, a sessão atual e processos Microsoft durante atualizações são protegidos. Para liberar RAM de um aplicativo, salve seu trabalho antes de encerrá-lo.
+
 ## Erro ao carregar o plugin `repo` do Conda
 
 Se aparecer algo como:
