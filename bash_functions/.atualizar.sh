@@ -56,6 +56,18 @@ atualizar() {
     echo -e "   \e[1;30mAtualizando repositórios, pacotes do sistema e pacotes Snap...\e[0m"
     if ! command -v snap >/dev/null 2>&1; then _atualizar_instalar_modulo sistema || true; fi
     sudo apt update && sudo apt full-upgrade -y && sudo apt autoremove -y && sudo apt clean
+    # Atualiza o GitHub CLI pelo repositório oficial.
+    if ! command -v gh >/dev/null 2>&1; then
+        _atualizar_instalar_modulo gh || true
+    fi
+    if dpkg-query -W -f='${db:Status-Status}' gh 2>/dev/null | grep -q installed; then
+        echo -e "   \e[1;30mAtualizando GitHub CLI via APT...\e[0m"
+        sudo apt install -y --only-upgrade gh || echo -e "   \e[1;33m[AVISO] Não foi possível atualizar o GitHub CLI.\e[0m"
+    elif command -v gh >/dev/null 2>&1; then
+        echo -e "   \e[1;30mGitHub CLI encontrado fora do APT; atualização automática ignorada.\e[0m"
+    else
+        echo -e "   \e[1;33m[AVISO] GitHub CLI não encontrado.\e[0m"
+    fi
     if command -v snap >/dev/null 2>&1; then
         sudo snap refresh
     fi

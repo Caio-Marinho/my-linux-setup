@@ -137,6 +137,10 @@ info() {
             echo -e "   • MongoDB, pgAdmin e Compass dependem de arquitetura/versão compatível e dos repositórios oficiais."
             echo -e "   • Instala as ferramentas; não restaura dados nem ambientes Conda de projetos."
             echo -e "   • No Conda Anaconda já instalado, \e[1;36matualizar\e[0m pergunta antes de aceitar termos pendentes."
+            echo -e "   \e[1;33m12. GITHUB CLI:\e[0m"
+            echo -e "   Instalar pelo repositório oficial: \e[36mbash ~/.bash_functions/.instalar.sh gh\e[0m"
+            echo -e "   Conferir a instalação: \e[36mgh --version\e[0m"
+            echo -e "   Autenticar a conta GitHub: \e[36mgh auth login\e[0m"
             echo ""
             ;;
 
@@ -174,6 +178,8 @@ info() {
             echo -e "   \e[36msudo apt install -y --only-upgrade minikube\e[0m"
             echo -e "   \e[36msudo apt install -y --only-upgrade kompose\e[0m"
             echo -e "   \e[1;36m[10/10] GCC C/C++:\e[0m \e[36msudo apt install -y --only-upgrade gcc g++\e[0m"
+            echo -e "   GitHub CLI, instalado pelo APT: \e[36msudo apt install -y --only-upgrade gh\e[0m"
+            echo -e "   Se não estiver instalado: \e[36mbash ~/.bash_functions/.instalar.sh gh\e[0m"
             echo ""
             echo -e "\e[1;33m3. INSTALAR OU REINSTALAR:\e[0m"
             echo -e "   • Tudo: \e[1;36mbash ~/.bash_functions/.instalar.sh tudo\e[0m"

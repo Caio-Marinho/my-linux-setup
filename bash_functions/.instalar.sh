@@ -222,6 +222,28 @@ instalar_codex() {
     curl -fsSL https://chatgpt.com/codex/install.sh | sh
 }
 
+instalar_github_cli() {
+    if command -v gh >/dev/null 2>&1; then
+        log "GitHub CLI já está instalado: $(gh --version | head -n 1)"
+        return 0
+    fi
+
+    log 'Instalando GitHub CLI pelo repositório oficial.'
+    local out status
+    (type -p wget >/dev/null || (sudo apt update && sudo apt install wget -y)) \
+        && sudo mkdir -p -m 755 /etc/apt/keyrings \
+        && out=$(mktemp) && wget -nv -O"$out" https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+        && cat "$out" | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
+        && sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+        && sudo mkdir -p -m 755 /etc/apt/sources.list.d \
+        && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+        && sudo apt update \
+        && sudo apt install gh -y
+    status=$?
+    [[ -n "${out:-}" ]] && rm -f "$out"
+    return "$status"
+}
+
 instalar_kubernetes() {
     if ! command -v kubectl >/dev/null 2>&1; then instalar_snap_ou_apt kubectl true || true; fi
     if ! command -v minikube >/dev/null 2>&1; then instalar_snap_ou_apt minikube true || true; fi
@@ -235,7 +257,7 @@ instalar_gcc() {
 }
 
 case "$MODULE" in
-    tudo|all|sistema|conda|java|node|npm|linguagens|scala|dotnet|bancos|database|visuais|gui|codex|kubernetes|k8s|gcc|c) ;;
+    tudo|all|sistema|conda|java|node|npm|linguagens|scala|dotnet|bancos|database|visuais|gui|codex|github|github-cli|gh|kubernetes|k8s|gcc|c) ;;
     *) aviso "Módulo desconhecido: $MODULE"; exit 2 ;;
 esac
 
@@ -255,6 +277,7 @@ case "$MODULE" in
         instalar_bancos
         instalar_visuais
         instalar_codex
+        instalar_github_cli
         instalar_kubernetes
         instalar_gcc
         ;;
@@ -266,6 +289,7 @@ case "$MODULE" in
     bancos|database) instalar_bancos ;;
     visuais|gui) instalar_visuais ;;
     codex) instalar_codex ;;
+    github|github-cli|gh) instalar_github_cli ;;
     kubernetes|k8s) instalar_kubernetes ;;
     gcc|c) instalar_gcc ;;
     *) exit 2 ;;
